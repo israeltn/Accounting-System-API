@@ -1,7 +1,18 @@
 from django.shortcuts import render
 from rest_framework import generics,status
 from rest_framework.response import Response
-from .serializers import SignUpSerializer, MyTokenObtainPairSerialzer, UpdateProfileSerializer, UserProfileSerializer, UpdateUserSerializer, UserSerializer,CashAdvanceSerializer, RetirementVoucherSerializer
+from rest_framework.pagination import PageNumberPagination
+from .serializers import (
+    SignUpSerializer, 
+    MyTokenObtainPairSerialzer, 
+    UpdateProfileSerializer,
+    UserProfileSerializer, 
+    UpdateUserSerializer, 
+    UserSerializer,
+    CashAdvanceSerializer, 
+    RetirementVoucherSerializer,
+    CashAdvancelistSerializer
+)
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -15,6 +26,16 @@ User = get_user_model()
 
 
 # Create your views here.
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 2
+    page_size_query_param = 'page_size'
+    max_page_size = 2  
+
+class CashAdvanceResultsSetPagination(PageNumberPagination):
+    page_size = 7
+    page_size_query_param = 'page_size'
+    max_page_size = 7  
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerialzer
  
@@ -48,18 +69,25 @@ class UserUpdateAPIView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class UserListAPIView(APIView):
+
+
+
+class UserListAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request):
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True )  
-        response={
-                "message": "Users list",
-                "data":serializer.data
-            }
-        return Response(data=response, status=status.HTTP_201_CREATED)     
-        # return Response(serializer.data)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class =StandardResultsSetPagination
+
+    # def get(self, request):
+    #     users = User.objects.all()
+    #     paginator = self.pagination_class()
+    #     serializer = UserSerializer(users, many=True )  
+    #     response={
+    #             "message": "Users list",
+    #             "data":serializer.data
+    #         }
+    #     return Response(data=response, status=status.HTTP_200_OK)     
+    #     # return Response(serializer.data)
     
 class ProfileUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
@@ -102,10 +130,52 @@ class CashAdvanceCreateAPIView(APIView):
             cash_advance = serializer.save(user=request.user)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400) 
-      
+
+class UserCashAdvanceListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    # queryset = CashAdvance.objects.all()
+    serializer_class = CashAdvancelistSerializer
+
+    pagination_class =CashAdvanceResultsSetPagination
+
+    def get_queryset(self):
+            queryset = CashAdvance.objects.all()
+            # Filter only authenticated users
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(user=self.request.user)
+
+            return queryset
+class CashAdvanceListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CashAdvance.objects.all()
+    serializer_class = CashAdvancelistSerializer
+
+    pagination_class =CashAdvanceResultsSetPagination
+    
+    # def get_queryset(self):
+    #         queryset = CashAdvance.objects.all()
+    #         # Filter only authenticated users
+    #         if self.request.user.is_authenticated:
+    #             queryset = queryset.filter(user=self.request.user)
+
+    #         return queryset
+    
+    # def get(self, request):
+    #     cash_advances = CashAdvance.objects.all()
+    #     paginator = self.pagination_class()
+    #     serializer = CashAdvancelistSerializer(cash_advances, many=True )  
+    #     response={
+    #             "message": "Cash Advance list",
+    #             "data":serializer.data,
+    #             "pagination":paginator,
+    #         }
+    #     return Response(data=response, status=status.HTTP_201_CREATED)   
+
+
 # Update delect Cash Advance 
 class CashAdvanceRetrieveUpdateDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    
     def get_object(self, cash_advance_id):
         try:
             return CashAdvance.objects.get(id=cash_advance_id, user=self.request.user)
@@ -115,7 +185,11 @@ class CashAdvanceRetrieveUpdateDeleteAPIView(APIView):
         cash_advance = self.get_object(cash_advance_id)
         if cash_advance:
             serializer = CashAdvanceSerializer(cash_advance)
-            return Response(serializer.data, status=200)
+            response={
+                "message": "Cash Advance",
+                "data":serializer.data
+            }
+            return Response(data=response, status=status.HTTP_200_OK)  
         return Response({"error": "Cash advance not found."}, status=404)
 
     def put(self, request, cash_advance_id):

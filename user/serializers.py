@@ -1,4 +1,3 @@
-
 from  rest_framework import serializers
 from .models import CashAdvance, RetirementVoucher
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -18,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', 'profile',  ]
+
 
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,6 +44,7 @@ class MyTokenObtainPairSerialzer(TokenObtainPairSerializer):
         # These are claims, you can add custom claims       
         
         token['email'] = user.email
+        token['first_name'] = user.first_name
         token['staff_number'] = user.staff_number
         token['is_active'] = user.is_active
         token['role'] = user.role
@@ -106,9 +107,21 @@ class UpdateUserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
-    
-class CashAdvanceSerializer(serializers.ModelSerializer):  
-    
+
+
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number' ]
+
+class CashAdvancelistSerializer(serializers.ModelSerializer):  
+    user = UsersSerializer()
+    class Meta:
+        model = CashAdvance        
+        fields = '__all__'
+        
+
+class CashAdvanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = CashAdvance        
         fields = ('id', 'user', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','application_date', 'is_approved')

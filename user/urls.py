@@ -2,7 +2,14 @@
 from . import views
 from django.urls import path
 from .views import UserUpdateAPIView, UserListAPIView, ProfileUpdateView, UserProfileView
-from .views import CashAdvanceCreateAPIView, RetirementVoucherCreateAPIView,CashAdvanceRetrieveUpdateDeleteAPIView, RetirementVoucherRetrieveUpdateDeleteAPIView
+from .views import(
+    CashAdvanceCreateAPIView, 
+    RetirementVoucherCreateAPIView,
+    CashAdvanceRetrieveUpdateDeleteAPIView, 
+    RetirementVoucherRetrieveUpdateDeleteAPIView,
+    CashAdvanceListAPIView,
+    UserCashAdvanceListAPIView
+    )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView, TokenVerifyView
 )
@@ -19,7 +26,13 @@ urlpatterns = [
     path('profile/view/', UserProfileView.as_view(), name='profile-view'),
     
     path('cash-advance/', CashAdvanceCreateAPIView.as_view(), name='cash-advance-create'),
+     path('user-cash-advance/', UserCashAdvanceListAPIView.as_view(), name='cash-advance-create'),
+    
     path('cash-advance/<int:cash_advance_id>/', CashAdvanceRetrieveUpdateDeleteAPIView.as_view(), name='cash-advance-retrieve-update-delete'),
+    path('cashadvance-list/', CashAdvanceListAPIView.as_view(), name='cashadvance-list'),
+     path('cashadvance/', CashAdvanceListAPIView.as_view(), name='cashadvance-list'),
+
+
     path('retirement-voucher/', RetirementVoucherCreateAPIView.as_view(), name='retirement-voucher-create'),
     path('retirement-voucher/<int:retirement_voucher_id>/', RetirementVoucherRetrieveUpdateDeleteAPIView.as_view(), name='retirement-voucher-retrieve-update-delete'),
     
