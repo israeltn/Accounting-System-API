@@ -45,6 +45,7 @@ class MyTokenObtainPairSerialzer(TokenObtainPairSerializer):
         
         token['email'] = user.email
         token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
         token['staff_number'] = user.staff_number
         token['is_active'] = user.is_active
         token['role'] = user.role
@@ -58,7 +59,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Profile         
-        fields = ['user', 'department', 'mobile', 'office', 'address',  'others', 'station', 'dob',  'profile', 'verified' ]  # Add other fields as needed
+        fields = ['user', 'department', 'mobile', 'office', 'address',  'degnisation', 'station', 'dob',  'profile', 'verified' ]  # Add other fields as needed
         read_only_fields = ['user']
 
     def update(self, instance, validated_data):
@@ -68,7 +69,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         instance.mobile = validated_data.get('mobile', instance.mobile)
         instance.office = validated_data.get('office', instance.office)
         instance.address = validated_data.get('address', instance.address)       
-        instance.others = validated_data.get('others', instance.others)
+        instance.degnisation = validated_data.get('degnisation', instance.degnisation)
         instance.station = validated_data.get('station', instance.station)
         instance.dob = validated_data.get('dob', instance.dob) 
         instance.verified = validated_data.get('verified', instance.verified)            
@@ -109,27 +110,78 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         return instance
 
 
+# Get Cash Advance list with user 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number' ]
 
-class CashAdvancelistSerializer(serializers.ModelSerializer):  
+class CashAdvancelistSerializer(serializers.ModelSerializer):      
     user = UsersSerializer()
     class Meta:
-        model = CashAdvance        
-        fields = '__all__'
-        
-
-class CashAdvanceSerializer(serializers.ModelSerializer):
-    class Meta:
+       
         model = CashAdvance        
         fields = ('id', 'user', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','application_date', 'is_approved')
+# End of Get Cash Advance list with user 
+
+
+# Get CashAdvance with user and profile
+class CashAdvanceUserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__' 
+class CashAdvanceUserSerializer(serializers.ModelSerializer):
+    profile = CashAdvanceUserProfileSerializer()
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', 'profile' ]
+class CashAdvanceSerializer(serializers.ModelSerializer):
+    user = CashAdvanceUserSerializer()
+    formatted_date = serializers.DateTimeField(format="%d %B %Y", source="application_date")
+    class Meta:
+       
+        model = CashAdvance        
+        fields = ('id', 'user', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','account_remark', 'is_approved', 'formatted_date')
+        read_only_fields = ['user', 'is_approved', 'application_date']
+
+
+class UpdateCashAdvanceSerializer(serializers.ModelSerializer):   
+    class Meta:       
+        model = CashAdvance        
+        fields = ('id', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','account_remark', 'is_approved')
+        read_only_fields = ['user', 'is_approved', 'application_date']
+
+class PostCashAdvanceSerializer(serializers.ModelSerializer):    
+    class Meta:
+       
+        model = CashAdvance        
+        fields = ('id', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','application_date','account_remark', 'is_approved')
         read_only_fields = ['user', 'is_approved']
-  
+class ApproveUpdateCashAdvanceSerializer(serializers.ModelSerializer): 
+    class Meta:       
+        model = CashAdvance        
+        fields = ('account_remark', 'is_approved')
+        read_only_fields = ['user']
+# End of Get CashAdvance with user and profile
+
+
+
+class CashUserSerializer(serializers.ModelSerializer):   
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', ]
+        read_only_fields = ['user', 'profile']
+class listCashAdvanceSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    formatted_date = serializers.DateTimeField(format="%d %B %Y", source="application_date")
+    class Meta:       
+        model = CashAdvance        
+        fields = ('id', 'user', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','formatted_date','account_remark', 'is_approved')
+        read_only_fields = ['user', 'is_approved']
 
 class RetirementVoucherSerializer(serializers.ModelSerializer):
+    cash_advance = CashAdvanceSerializer()
     class Meta:
         model = RetirementVoucher
-        fields = ('id', 'user', 'cash_advance', 'amount_granted','title', 'amount_spent', 'account_number', 'bank', 'branch', 'sort_code', 'discription', 'supporting_documents')
-        read_only_fields = ['user', 'is_approved']
+        fields = ('id', 'user', 'cash_advance', 'amount_granted','title', 'amount_spent', 'account_number', 'bank', 'branch', 'sort_code', 'discription', 'supporting_documents', 'is_approved')
+        read_only_fields = [ 'user', 'is_approved']

@@ -11,11 +11,11 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class CashAdvanceAdmin(admin.ModelAdmin):
     list_editable = ['is_approved']
-    list_display = ['id','user','amount','account_number', 'bank', 'code', 'is_approved']
+    list_display = ['id','title','user','amount','account_number', 'bank', 'code', 'is_approved']
 
 class RetirementVoucherAdmin(admin.ModelAdmin):
     list_editable = ['is_approved']
-    list_display = ['id','user', 'cash_advance',  'amount_granted', 'amount_spent', 'account_number','bank', 'code', 'is_approved', ]
+    list_display = ['id', 'title', 'cash_advance',  'amount_granted', 'amount_spent', 'account_number','bank', 'code', 'is_approved', ]
 
 # class AuditRemarkAdmin(admin.ModelAdmin):
 #     list_editable = ['approved']

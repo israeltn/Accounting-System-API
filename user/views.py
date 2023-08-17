@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import filters
 from rest_framework import generics,status
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
@@ -11,14 +12,19 @@ from .serializers import (
     UserSerializer,
     CashAdvanceSerializer, 
     RetirementVoucherSerializer,
-    CashAdvancelistSerializer
+    CashAdvancelistSerializer,
+    UpdateCashAdvanceSerializer,
+    PostCashAdvanceSerializer,
+    listCashAdvanceSerializer,
+    ApproveUpdateCashAdvanceSerializer
+    
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework.request import Request
+# from rest_framework.request import Request
 from .models import Profile
 from .models import CashAdvance, RetirementVoucher
 from django.contrib.auth import get_user_model
@@ -28,17 +34,26 @@ User = get_user_model()
 # Create your views here.
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 2
+    page_size = 5
     page_size_query_param = 'page_size'
-    max_page_size = 2  
+    max_page_size = 5
 
 class CashAdvanceResultsSetPagination(PageNumberPagination):
     page_size = 7
     page_size_query_param = 'page_size'
+    max_page_size = 7
+
+
+class RetirementResultsSetPagination(PageNumberPagination):
+    page_size = 7
+    page_size_query_param = 'page_size'
     max_page_size = 7  
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerialzer
- 
+
+
+# User SignUp
 class SignUpView(generics.GenericAPIView):
     permission_classes =[AllowAny]
     serializer_class=SignUpSerializer
@@ -60,7 +75,8 @@ class SignUpView(generics.GenericAPIView):
             }
         return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
 
-    
+
+# User Profile Update
 class UserUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def put(self, request):
@@ -72,6 +88,7 @@ class UserUpdateAPIView(APIView):
 
 
 
+# User List
 class UserListAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
@@ -88,7 +105,9 @@ class UserListAPIView(generics.ListAPIView):
     #         }
     #     return Response(data=response, status=status.HTTP_200_OK)     
     #     # return Response(serializer.data)
-    
+
+
+# Profile Update
 class ProfileUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UpdateProfileSerializer
@@ -102,6 +121,9 @@ class ProfileUpdateView(generics.UpdateAPIView):
         serializer = UserProfileSerializer(profile, many=True )        
         return Response(serializer.data)
     
+
+
+# User Profile View
 class UserProfileView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserProfileSerializer
@@ -125,41 +147,39 @@ class CashAdvanceCreateAPIView(APIView):
         return Response(serializer.data, status=200)
     
     def post(self, request):
-        serializer = CashAdvanceSerializer(data=request.data)
+        serializer = PostCashAdvanceSerializer(data=request.data)
         if serializer.is_valid():
             cash_advance = serializer.save(user=request.user)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400) 
 
+
+# User CashAdvance 
 class UserCashAdvanceListAPIView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-    # queryset = CashAdvance.objects.all()
+    permission_classes = [IsAuthenticated]    
+    queryset = CashAdvance.objects.all() 
     serializer_class = CashAdvancelistSerializer
 
     pagination_class =CashAdvanceResultsSetPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'amount', 'bank', 'branch', 'user__first_name']
 
     def get_queryset(self):
-            queryset = CashAdvance.objects.all()
-            # Filter only authenticated users
-            if self.request.user.is_authenticated:
-                queryset = queryset.filter(user=self.request.user)
-
+            user = self.request.user
+            # queryset = CashAdvance.objects.order_by('-application_date') 
+            # queryset = CashAdvance.objects.all()
+            queryset = super().get_queryset()
+            if user.is_authenticated:
+                queryset = queryset.filter(user=user)
             return queryset
+    
+
 class CashAdvanceListAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = CashAdvance.objects.all()
     serializer_class = CashAdvancelistSerializer
-
-    pagination_class =CashAdvanceResultsSetPagination
-    
-    # def get_queryset(self):
-    #         queryset = CashAdvance.objects.all()
-    #         # Filter only authenticated users
-    #         if self.request.user.is_authenticated:
-    #             queryset = queryset.filter(user=self.request.user)
-
-    #         return queryset
-    
+    pagination_class =CashAdvanceResultsSetPagination    
+      
     # def get(self, request):
     #     cash_advances = CashAdvance.objects.all()
     #     paginator = self.pagination_class()
@@ -169,10 +189,74 @@ class CashAdvanceListAPIView(generics.ListAPIView):
     #             "data":serializer.data,
     #             "pagination":paginator,
     #         }
-    #     return Response(data=response, status=status.HTTP_201_CREATED)   
+    #     return Response(data=response, status=status.HTTP_201_CREATED)
+    #    
 
 
-# Update delect Cash Advance 
+class DepartCashAdvanceListView(generics.ListAPIView):
+    serializer_class = CashAdvanceSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = CashAdvanceResultsSetPagination
+
+    def get_queryset(self):       
+        # Get Auth user department in user profile
+        department = self.request.user.profile.department
+
+        if department in ['ICT', 'Account', 'Audit', 'Procurement', 'News', 'Engineering', 'Programme']:
+            return CashAdvance.objects.filter(user__profile__department=department)
+        else:
+            return CashAdvance.objects.none()  # No cash advances for other departments
+
+
+# Detail View of Cash Advance
+class CashAdvanceDetailView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CashAdvance.objects.all()
+    serializer_class = CashAdvanceSerializer
+    lookup_field = 'id'
+
+
+# Update Cash Advance  approval and remark 
+class CashAdvanceUpdateApprovalAPIView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CashAdvance.objects.all()
+    serializer_class = ApproveUpdateCashAdvanceSerializer
+    lookup_field = 'pk'
+    http_method_names = ['put', 'patch']
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        instance.is_approved = 'account'
+        instance.account_remark = request.data.get('account_remark', instance.account_remark)
+        instance.save()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+    
+
+# Update Audit  approval and remark     
+class AuditCashAdvanceUpdateApprovalAPIView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = CashAdvance.objects.all()
+    serializer_class = ApproveUpdateCashAdvanceSerializer
+    lookup_field = 'pk'
+    http_method_names = ['put', 'patch']
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        instance.is_approved = 'audit'
+        instance.account_remark = request.data.get('account_remark', instance.account_remark)
+        instance.save()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+    
+
+# Update Cash Advance 
 class CashAdvanceRetrieveUpdateDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -182,9 +266,10 @@ class CashAdvanceRetrieveUpdateDeleteAPIView(APIView):
         except CashAdvance.DoesNotExist:
             return None
     def get(self, request, cash_advance_id):
-        cash_advance = self.get_object(cash_advance_id)
+        # cash_advances = CashAdvance.objects.filter(user=request.user)
+        cash_advance = CashAdvance.objects.filter(user=request.user)
         if cash_advance:
-            serializer = CashAdvanceSerializer(cash_advance)
+            serializer = CashAdvanceSerializer(cash_advance, many=True)
             response={
                 "message": "Cash Advance",
                 "data":serializer.data
@@ -195,7 +280,7 @@ class CashAdvanceRetrieveUpdateDeleteAPIView(APIView):
     def put(self, request, cash_advance_id):
         cash_advance = self.get_object(cash_advance_id)
         if cash_advance:
-            serializer = CashAdvanceSerializer(cash_advance, data=request.data)
+            serializer = UpdateCashAdvanceSerializer(cash_advance, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=200)
@@ -208,8 +293,91 @@ class CashAdvanceRetrieveUpdateDeleteAPIView(APIView):
             cash_advance.delete()
             return Response(status=204)
         return Response({"error": "Cash advance not found."}, status=404) 
-          
+
+# List of Approved CashAdvance List
+class ApprovedCashAdvanceListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]   
+    serializer_class = CashAdvanceSerializer
+    pagination_class =CashAdvanceResultsSetPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'amount', 'bank', 'branch', 'application_date', 'user__first_name', 'user__staff_number','user__profile__department',]
+
+    def get_queryset(self):
+            # queryset = CashAdvance.objects.order_by('-application_date') 
+            # Filter only Approved  CashAdvance        
+            queryset =CashAdvance.objects.filter(is_approved='approved')
+            application_date_filter = self.request.query_params.get('application_date')
+            if application_date_filter:
+                queryset = queryset.filter(application_date=application_date_filter)
+            queryset = queryset.order_by('-application_date') 
+            return queryset
+            
+# End of Approved CashAdvance List
+
+# Account CashAdvance List
+class AccountCashAdvanceListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]   
+    serializer_class = listCashAdvanceSerializer
+    pagination_class =CashAdvanceResultsSetPagination
+
+    def get_queryset(self):
+            # Filter only Auditing  CashAdvance        
+            queryset =CashAdvance.objects.filter(is_approved='reviewed')  
+            return queryset
+# End of Account CashAdvance List
+
+# Audited CashAdvance List
+class AuditCashAdvanceListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]   
+    serializer_class = listCashAdvanceSerializer
+    pagination_class =CashAdvanceResultsSetPagination
+
+    def get_queryset(self):
+            # Filter only Auditing  CashAdvance        
+            queryset =CashAdvance.objects.filter(is_approved='audited')  
+            return queryset
+# End of Audited CashAdvance List
+
+# List of Paid CashAdvance List
+class PaidCashAdvanceListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]   
+    serializer_class = listCashAdvanceSerializer
+    pagination_class =CashAdvanceResultsSetPagination
+
+    def get_queryset(self):
+            # Filter only Paid  CashAdvance        
+            queryset =CashAdvance.objects.filter(is_approved='paid')  
+            return queryset
+
+
+
+
 # Get and Post  Retirement Voucher 
+
+class RetirementListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = RetirementVoucher.objects.all()
+    serializer_class = RetirementVoucherSerializer
+    pagination_class =RetirementResultsSetPagination
+
+
+class UserRetirementListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    # queryset = CashAdvance.objects.all()
+    serializer_class = RetirementVoucherSerializer
+
+    pagination_class =RetirementResultsSetPagination
+
+    def get_queryset(self):
+            queryset = RetirementVoucher.objects.order_by('-application_date') 
+            # queryset = CashAdvance.objects.all()
+            # Filter only authenticated users
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(user=self.request.user)  
+            return queryset
+    
+
 class RetirementVoucherCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
