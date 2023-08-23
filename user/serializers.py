@@ -1,5 +1,5 @@
 from  rest_framework import serializers
-from .models import CashAdvance, RetirementVoucher
+from .models import CashAdvance, RetirementVoucher, Capital
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.models import User
 from .models import User, Profile
@@ -185,3 +185,9 @@ class RetirementVoucherSerializer(serializers.ModelSerializer):
         model = RetirementVoucher
         fields = ('id', 'user', 'cash_advance', 'amount_granted','title', 'amount_spent', 'account_number', 'bank', 'branch', 'sort_code', 'discription', 'supporting_documents', 'is_approved')
         read_only_fields = [ 'user', 'is_approved']
+
+class CapitalSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = Capital
+        fields = ('id','title', 'zonal_station',  'amount', 'remark', 'date','supporting_documents', 'code', 'type',)
+       

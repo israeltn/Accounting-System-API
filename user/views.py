@@ -16,7 +16,8 @@ from .serializers import (
     UpdateCashAdvanceSerializer,
     PostCashAdvanceSerializer,
     listCashAdvanceSerializer,
-    ApproveUpdateCashAdvanceSerializer
+    ApproveUpdateCashAdvanceSerializer,
+    CapitalSerializer
     
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -26,7 +27,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 # from rest_framework.request import Request
 from .models import Profile
-from .models import CashAdvance, RetirementVoucher
+from .models import CashAdvance, RetirementVoucher, Capital
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -180,18 +181,7 @@ class CashAdvanceListAPIView(generics.ListAPIView):
     serializer_class = CashAdvancelistSerializer
     pagination_class =CashAdvanceResultsSetPagination    
       
-    # def get(self, request):
-    #     cash_advances = CashAdvance.objects.all()
-    #     paginator = self.pagination_class()
-    #     serializer = CashAdvancelistSerializer(cash_advances, many=True )  
-    #     response={
-    #             "message": "Cash Advance list",
-    #             "data":serializer.data,
-    #             "pagination":paginator,
-    #         }
-    #     return Response(data=response, status=status.HTTP_201_CREATED)
-    #    
-
+  
 
 class DepartCashAdvanceListView(generics.ListAPIView):
     serializer_class = CashAdvanceSerializer
@@ -422,3 +412,19 @@ class RetirementVoucherRetrieveUpdateDeleteAPIView(APIView):
             retirement_voucher.delete()
             return Response(status=204)
         return Response({"error": "Retirement voucher not found."}, status=404)
+  
+class CashAdvanceCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+            serializer = CapitalSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400) 
+    
+
+class CapitalListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Capital.objects.all()
+    serializer_class = CapitalSerializer
+    pagination_class =StandardResultsSetPagination
