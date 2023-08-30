@@ -23,6 +23,9 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 
     'user',
+    'cashadvance',
+    'retirement',
+    'capital',
     "corsheaders",
     'django.contrib.admin',
     'django.contrib.auth',

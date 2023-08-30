@@ -1,5 +1,5 @@
 from  rest_framework import serializers
-from .models import CashAdvance, RetirementVoucher, Capital
+# from .models import  RetirementVoucher
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.models import User
 from .models import User, Profile
@@ -116,78 +116,6 @@ class UsersSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number' ]
 
-class CashAdvancelistSerializer(serializers.ModelSerializer):      
-    user = UsersSerializer()
-    class Meta:
-       
-        model = CashAdvance        
-        fields = ('id', 'user', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','application_date', 'is_approved')
-# End of Get Cash Advance list with user 
 
 
-# Get CashAdvance with user and profile
-class CashAdvanceUserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = '__all__' 
-class CashAdvanceUserSerializer(serializers.ModelSerializer):
-    profile = CashAdvanceUserProfileSerializer()
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', 'profile' ]
-class CashAdvanceSerializer(serializers.ModelSerializer):
-    user = CashAdvanceUserSerializer()
-    formatted_date = serializers.DateTimeField(format="%d %B %Y", source="application_date")
-    class Meta:
-       
-        model = CashAdvance        
-        fields = ('id', 'user', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','account_remark', 'is_approved', 'formatted_date')
-        read_only_fields = ['user', 'is_approved', 'application_date']
-
-
-class UpdateCashAdvanceSerializer(serializers.ModelSerializer):   
-    class Meta:       
-        model = CashAdvance        
-        fields = ('id', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','account_remark', 'is_approved')
-        read_only_fields = ['user', 'is_approved', 'application_date']
-
-class PostCashAdvanceSerializer(serializers.ModelSerializer):    
-    class Meta:
-       
-        model = CashAdvance        
-        fields = ('id', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','application_date','account_remark', 'is_approved')
-        read_only_fields = ['user', 'is_approved']
-class ApproveUpdateCashAdvanceSerializer(serializers.ModelSerializer): 
-    class Meta:       
-        model = CashAdvance        
-        fields = ('account_remark', 'is_approved')
-        read_only_fields = ['user']
-# End of Get CashAdvance with user and profile
-
-
-
-class CashUserSerializer(serializers.ModelSerializer):   
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', ]
-        read_only_fields = ['user', 'profile']
-class listCashAdvanceSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    formatted_date = serializers.DateTimeField(format="%d %B %Y", source="application_date")
-    class Meta:       
-        model = CashAdvance        
-        fields = ('id', 'user', 'amount', 'title', 'discription', 'account_number', 'bank', 'branch', 'sort_code','supporting_documents','formatted_date','account_remark', 'is_approved')
-        read_only_fields = ['user', 'is_approved']
-
-class RetirementVoucherSerializer(serializers.ModelSerializer):
-    cash_advance = CashAdvanceSerializer()
-    class Meta:
-        model = RetirementVoucher
-        fields = ('id', 'user', 'cash_advance', 'amount_granted','title', 'amount_spent', 'account_number', 'bank', 'branch', 'sort_code', 'discription', 'supporting_documents', 'is_approved')
-        read_only_fields = [ 'user', 'is_approved']
-
-class CapitalSerializer(serializers.ModelSerializer):    
-    class Meta:
-        model = Capital
-        fields = ('id','title', 'zonal_station',  'amount', 'remark', 'date','supporting_documents', 'code', 'type',)
        
