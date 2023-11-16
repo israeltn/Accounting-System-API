@@ -133,6 +133,21 @@ DATABASES = {
     }
 }
 
+# AWS RDS
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'frcnhr',
+#         'USER': 'bravecup',
+#         'PASSWORD': 'CupBrav#1960',
+#         'HOST': 'hrdatabase.cxc7ezhc2tkw.eu-north-1.rds.amazonaws.com',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#         'init_command': 'SET default_storage_engine=INNODB',
+#         }
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
