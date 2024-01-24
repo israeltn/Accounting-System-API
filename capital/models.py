@@ -96,3 +96,28 @@ class Overhead(models.Model):
 
     def __str__(self):
         return f'{self.code} {self.title}'   
+    
+class Commercials(models.Model):
+    station_choices = [
+        ('abuja', 'Abuja'),
+        ('enugu', 'Enugu'),
+        ('headquaters', 'Headquaters'),
+        ('ibadan', 'Ibadan'),
+        ('kaduna', 'Kaduna'),
+        ('lagos', 'Lagos'),
+        ('northc', 'Northc'),
+        ('south', 'South'),
+        ('northe', 'Northe'),
+    ]
+    zonal_station = models.CharField(max_length=100, choices=station_choices)
+     
+    title = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)  
+    discription=models.TextField(max_length=200)
+    code=models.CharField(max_length=200, null=True )   
+    supporting_documents= models.FileField(upload_to='overhead/', validators=[validate_image_size], null=True )
+    date = models.DateTimeField(default=now) 
+    remark=models.CharField(max_length=200, null=True) 
+
+    def __str__(self):
+        return f'{self.code} {self.title}'  
