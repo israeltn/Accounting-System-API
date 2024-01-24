@@ -1,18 +1,11 @@
 from django.db import models
 from user.models import User
+from contractors.models import Contractor
+
 
 # Create your models here.
 
 
-class Contractor(models.Model):
-    company_name = models.CharField(max_length=255)
-    tin_number = models.CharField(max_length=20, unique=True)
-    address = models.TextField()
-    phone = models.CharField(max_length=15)
-    services_offered = models.TextField()
-
-    def __str__(self):
-        return self.company_name
 
 class ContractPaymentVoucher(models.Model):
     payee = models.ForeignKey(Contractor, on_delete=models.CASCADE)
