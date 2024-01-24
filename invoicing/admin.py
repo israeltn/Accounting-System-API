@@ -1,10 +1,7 @@
 # In your app's admin.py file (e.g., yourapp/admin.py)
 from django.contrib import admin
-from .models import Contractor, ContractPaymentVoucher, PaymentVoucher, StaffClaim
+from .models import ContractPaymentVoucher, PaymentVoucher, StaffClaim
 
-@admin.register(Contractor)
-class ContractorAdmin(admin.ModelAdmin):
-    list_display = ('company_name', 'tin_number', 'address', 'phone', 'services_offered')
 
 @admin.register(ContractPaymentVoucher)
 class ContractPaymentVoucherAdmin(admin.ModelAdmin):
