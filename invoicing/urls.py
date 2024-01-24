@@ -1,14 +1,11 @@
 from django.urls import path
-from .views import (
-    ContractorListCreateView, ContractorDetailView,
+from .views import (    
     ContractPaymentVoucherListCreateView, ContractPaymentVoucherDetailView,
     PaymentVoucherListCreateView, PaymentVoucherDetailView,
     StaffClaimListCreateView, StaffClaimDetailView,
 )
 
-urlpatterns = [
-    path('contractors/', ContractorListCreateView.as_view(), name='contractor-list-create'),
-    path('contractors/<int:pk>/', ContractorDetailView.as_view(), name='contractor-detail'),
+urlpatterns = [  
 
     path('contract-payment-vouchers/', ContractPaymentVoucherListCreateView.as_view(), name='contract-payment-voucher-list-create'),
     path('contract-payment-vouchers/<int:pk>/', ContractPaymentVoucherDetailView.as_view(), name='contract-payment-voucher-detail'),
