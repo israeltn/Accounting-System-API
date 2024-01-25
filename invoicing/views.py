@@ -28,6 +28,7 @@ class ContractPaymentVoucherDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ContractPaymentVoucherSerializer
 
 class PaymentVoucherListCreateView(generics.ListCreateAPIView):
+    permission_classes = [AllowAny]
     queryset = PaymentVoucher.objects.all()
     serializer_class = PaymentVoucherSerializer
     pagination_class = CustomPageNumberPagination

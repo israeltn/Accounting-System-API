@@ -15,6 +15,15 @@ class PaymentVoucherSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentVoucher
         fields = '__all__'
+        extra_kwargs = {
+            'vat_amount': {'required': False},
+            'withholding_tax_amount': {'required': False},
+            'stamp_duty_amount': {'required': False},
+            'total_tax': {'required': False},
+            'grand_total': {'required': False},
+            'date': {'required': False},
+            # Add more fields as needed
+        }
 
 class StaffClaimSerializer(serializers.ModelSerializer):
     class Meta:

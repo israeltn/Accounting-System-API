@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import User
 from contractors.models import Contractor
+from django.utils.timezone import now
 
 
 # Create your models here.
@@ -43,6 +44,9 @@ class PaymentVoucher(models.Model):
     vat_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     withholding_tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     stamp_duty_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, null=True)
+
+    description = models.TextField()
+    date = models.DateTimeField(default=now) 
     
     vat_amount = models.DecimalField(max_digits=10, decimal_places=2)
     withholding_tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -51,8 +55,7 @@ class PaymentVoucher(models.Model):
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
     grand_total = models.DecimalField(max_digits=10, decimal_places=2)
     
-    description = models.TextField()
-    date = models.DateField()
+   
     # Additional fields as needed
 
     def save(self, *args, **kwargs):
