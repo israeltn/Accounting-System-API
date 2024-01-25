@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+# from ledger.views import general_ledger_api
 
 
 urlpatterns = [
@@ -14,4 +15,9 @@ urlpatterns = [
     path('api/', include('contractors.urls')), 
     path('api/', include('invoicing.urls')),
     path('api/', include('ledger.urls')), 
+   
+
+   
+    # path('general-ledger/', general_ledger_api, name='general_ledger_api'),
+    
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

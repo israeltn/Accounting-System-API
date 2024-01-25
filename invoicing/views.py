@@ -3,6 +3,7 @@ from rest_framework import generics
 from .models import  ContractPaymentVoucher, PaymentVoucher, StaffClaim
 from .serializers import ContractPaymentVoucherSerializer, PaymentVoucherSerializer, StaffClaimSerializer
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # class ContractorListCreateView(generics.ListCreateAPIView):
 #     queryset = Contractor.objects.all()
@@ -17,6 +18,7 @@ class CustomPageNumberPagination(PageNumberPagination):
     max_page_size = 100
 
 class ContractPaymentVoucherListCreateView(generics.ListCreateAPIView):
+    permission_classes = [AllowAny]
     queryset = ContractPaymentVoucher.objects.all()
     serializer_class = ContractPaymentVoucherSerializer
     pagination_class = CustomPageNumberPagination

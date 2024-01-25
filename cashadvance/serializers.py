@@ -17,8 +17,6 @@ class CapitalSerializer(serializers.ModelSerializer):
         model = CashAdvance
         fields = '__all__'
 
-
-
 class CashAdvancelistSerializer(serializers.ModelSerializer):      
     user = UserSerializer()
     class Meta:

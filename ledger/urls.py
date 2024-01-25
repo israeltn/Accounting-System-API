@@ -1,7 +1,7 @@
 # In your app's urls.py file
 from django.urls import path
-from .views import general_ledger_api
+from .views import CapitalAPIView
 
 urlpatterns = [
-    path('api/general-ledger/', general_ledger_api, name='general_ledger_api'),
+    path('general-ledger/', CapitalAPIView.as_view(), name='CapitalAPIView'),
 ]
