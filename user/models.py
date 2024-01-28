@@ -40,6 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     staff_number = models.CharField(max_length=10, unique=True)
+    ipps_number = models.CharField(max_length=10, unique=True)
     password=models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -47,12 +48,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_updated = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'staff_number']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'staff_number', 'ipps_number']
 
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.email
+        return self.ipps_number
 
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'
@@ -63,14 +64,22 @@ class Profile(models.Model):
     mobile=models.CharField(max_length=20)
     address=models.CharField(max_length=200)
     office=models.CharField(max_length=200)
+    gl=models.CharField(max_length=10)
+    step=models.CharField(max_length=10)
     department=models.CharField(max_length=200)    
     degnisation=models.CharField(max_length=200)
     station=models.CharField(max_length=200)
-    dob=models.DateField(auto_now=False, null=True)   
+    dob=models.DateField(auto_now=False, null=True) 
+    doa=models.DateField(auto_now=False, null=True)  
+    union=models.CharField(max_length=200, null=True) 
+    account_number=models.CharField(max_length=200)
+    bank=models.CharField(max_length=200)
+    branch=models.CharField(max_length=200)
+    sort_code=models.CharField(max_length=200)     
     profile= models.ImageField(upload_to='profile_images/', default="default.jpg")   
     verified=models.BooleanField(default=False)
     def __str__(self):
-        return self.user.first_name
+        return self.user.ipps_number
     
     def create_user_profile(sender, instance, created, **kwargs):
         if created:

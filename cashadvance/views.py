@@ -189,7 +189,7 @@ class ApprovedCashAdvanceListAPIView(generics.ListAPIView):
     serializer_class = CashAdvanceSerializer
     pagination_class =CashAdvanceResultsSetPagination
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'amount', 'bank', 'branch', 'application_date', 'user__first_name', 'user__staff_number','user__profile__department',]
+    search_fields = ['title', 'amount', 'bank', 'branch', 'application_date', 'user__first_name', 'user__staff_number', 'user__ipps_number', 'user__profile__department',]
 
     def get_queryset(self):
             # queryset = CashAdvance.objects.order_by('-application_date') 

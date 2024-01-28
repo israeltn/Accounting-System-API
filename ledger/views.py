@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 
 
 class CapitalAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         capitals = Capital.objects.all()

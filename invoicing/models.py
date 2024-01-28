@@ -71,6 +71,7 @@ class PaymentVoucher(models.Model):
 
 class StaffClaim(models.Model):
     payee = models.ForeignKey(User, on_delete=models.CASCADE)
+    code=models.CharField(max_length=10, null=True )   
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     date = models.DateField()

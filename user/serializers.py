@@ -16,14 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer()
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', 'profile',  ]
+        fields = ['id', 'first_name', 'ipps_number', 'last_name', 'email', 'role','staff_number', 'profile',  ]
 
 
 class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields = ['id', 'email', 'first_name', 'last_name', 'staff_number', 'role', 'password']
+        fields = ['id', 'email', 'first_name', 'ipps_number', 'last_name', 'staff_number', 'role', 'password']
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -47,6 +47,7 @@ class MyTokenObtainPairSerialzer(TokenObtainPairSerializer):
         token['first_name'] = user.first_name
         token['last_name'] = user.last_name
         token['staff_number'] = user.staff_number
+        token['ipps_number'] = user.ipps_number
         token['is_active'] = user.is_active
         token['role'] = user.role
         
@@ -59,29 +60,41 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Profile         
-        fields = ['user', 'department', 'mobile', 'office', 'address',  'degnisation', 'station', 'dob',  'profile', 'verified' ]  # Add other fields as needed
+        fields = ['user', 'department', 'mobile', 'office', 'gl', 'step', 'address', 
+                  'degnisation', 'station', 'dob','doa', 'union', 'account_number', 'bank', 'branch', 'sort_code' 'profile', 'verified',
+                   
+                    ]  # Add other fields as needed
         read_only_fields = ['user']
 
     def update(self, instance, validated_data):
-        # Update regular fields
-        instance.user = validated_data.get('user', instance.user)            
-        instance.department = validated_data.get('department', instance.department)
-        instance.mobile = validated_data.get('mobile', instance.mobile)
-        instance.office = validated_data.get('office', instance.office)
-        instance.address = validated_data.get('address', instance.address)       
-        instance.degnisation = validated_data.get('degnisation', instance.degnisation)
-        instance.station = validated_data.get('station', instance.station)
-        instance.dob = validated_data.get('dob', instance.dob) 
-        instance.verified = validated_data.get('verified', instance.verified)            
-        
-
         # Update profile picture if provided
         profile = validated_data.get('profile')
         if profile:
-            instance.profile_image = profile
+            instance.profile = profile
 
         instance.save()
         return instance
+
+    # def update(self, instance, validated_data):
+    #     # Update regular fields
+    #     instance.user = validated_data.get('user', instance.user)            
+    #     instance.department = validated_data.get('department', instance.department)
+    #     instance.mobile = validated_data.get('mobile', instance.mobile)
+    #     instance.office = validated_data.get('office', instance.office)
+    #     instance.address = validated_data.get('address', instance.address)       
+    #     instance.degnisation = validated_data.get('degnisation', instance.degnisation)
+    #     instance.station = validated_data.get('station', instance.station)
+    #     instance.dob = validated_data.get('dob', instance.dob) 
+    #     instance.verified = validated_data.get('verified', instance.verified)            
+        
+
+    #     # Update profile picture if provided
+    #     profile = validated_data.get('profile')
+    #     if profile:
+    #         instance.profile_image = profile
+
+    #     instance.save()
+    #     return instance
     
 
 class UpdateUserSerializer(serializers.ModelSerializer):
@@ -114,7 +127,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number' ]
+        fields = ['id', 'first_name',  'last_name', 'email', 'role','staff_number', 'ipps_number' ]
 
 
 

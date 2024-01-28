@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'contractors',
     'invoicing',
     'ledger',
+    'payroll',
     "corsheaders",
     'django.contrib.admin',
     'django.contrib.auth',
