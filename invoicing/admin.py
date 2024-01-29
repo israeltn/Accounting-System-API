@@ -5,7 +5,7 @@ from .models import ContractPaymentVoucher, PaymentVoucher, StaffClaim
 
 @admin.register(ContractPaymentVoucher)
 class ContractPaymentVoucherAdmin(admin.ModelAdmin):
-    list_display = ('payee', 'sub_total', 'vat_rate', 'withholding_tax_rate', 'stamp_duty_rate', 'date')
+    list_display = ('payee', 'sub_total', 'vat_rate', 'withholding_tax_rate', 'stamp_duty_rate', 'is_approved', 'date')
 
 @admin.register(PaymentVoucher)
 class PaymentVoucherAdmin(admin.ModelAdmin):

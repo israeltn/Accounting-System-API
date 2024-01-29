@@ -1,12 +1,21 @@
 from django.db import models
 from user.models import User
+from django.core.exceptions import ValidationError
 from contractors.models import Contractor
+from django.utils.timezone import now
 
 
 # Create your models here.
 
 
-
+class Cheeck(models.TextChoices):
+        PROCESSING = 'processing', 'processing'       
+        AUDIT = 'audited', 'Audited'
+        ACCOUNT = 'approved', 'Approved'
+        PAID = 'paid', 'Paid'
+def validate_image_size(value):
+    if value.size > 1024 * 1024:  # 1024KB in bytes
+        raise ValidationError("The maximum file size allowed is 1MB.") 
 class ContractPaymentVoucher(models.Model):
     payee = models.ForeignKey(Contractor, on_delete=models.CASCADE)
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
@@ -23,6 +32,8 @@ class ContractPaymentVoucher(models.Model):
     
     description = models.TextField()
     date = models.DateField()
+    supporting_documents= models.FileField(upload_to='contract_payment/', validators=[validate_image_size], null=True )
+    is_approved = models.CharField(max_length=20, choices=Cheeck.choices,  default=Cheeck.PROCESSING) 
     # Additional fields as needed
 
     def save(self, *args, **kwargs):
@@ -43,6 +54,9 @@ class PaymentVoucher(models.Model):
     vat_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     withholding_tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     stamp_duty_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, null=True)
+
+    description = models.TextField()
+    date = models.DateTimeField(default=now) 
     
     vat_amount = models.DecimalField(max_digits=10, decimal_places=2)
     withholding_tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -51,8 +65,7 @@ class PaymentVoucher(models.Model):
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
     grand_total = models.DecimalField(max_digits=10, decimal_places=2)
     
-    description = models.TextField()
-    date = models.DateField()
+   
     # Additional fields as needed
 
     def save(self, *args, **kwargs):
@@ -68,6 +81,7 @@ class PaymentVoucher(models.Model):
 
 class StaffClaim(models.Model):
     payee = models.ForeignKey(User, on_delete=models.CASCADE)
+    code=models.CharField(max_length=10, null=True )   
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     date = models.DateField()

@@ -17,8 +17,6 @@ class CapitalSerializer(serializers.ModelSerializer):
         model = CashAdvance
         fields = '__all__'
 
-
-
 class CashAdvancelistSerializer(serializers.ModelSerializer):      
     user = UserSerializer()
     class Meta:
@@ -37,7 +35,7 @@ class CashAdvanceUserSerializer(serializers.ModelSerializer):
     profile = CashAdvanceUserProfileSerializer()
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', 'profile' ]
+        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', 'ipps_number', 'profile' ]
 class CashAdvanceSerializer(serializers.ModelSerializer):
     user = CashAdvanceUserSerializer()
     formatted_date = serializers.DateTimeField(format="%d %B %Y", source="application_date")
@@ -72,7 +70,7 @@ class ApproveUpdateCashAdvanceSerializer(serializers.ModelSerializer):
 class CashUserSerializer(serializers.ModelSerializer):   
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', ]
+        fields = ['id', 'first_name', 'last_name', 'email', 'role','staff_number', 'ipps_number', ]
         read_only_fields = ['user', 'profile']
 class listCashAdvanceSerializer(serializers.ModelSerializer):
     user = UserSerializer()

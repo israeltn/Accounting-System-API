@@ -2,8 +2,10 @@ from rest_framework import viewsets, serializers, pagination, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Capital, Overhead
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 class CapitalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,24 +22,30 @@ class OverheadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Overhead
         fields = '__all__'
+
+
 class CapitalViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = Capital.objects.all()
-    serializer_class = CapitalSerializer
+    permission_classes = [IsAuthenticated]   
     pagination_class = CustomPagination
+    queryset = Capital.objects.order_by('-date')
+    serializer_class = CapitalSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['code', 'title', 'date']  # Specify fields to filter on
+    search_fields = ['title', 'amount', 'date', 'code']  # Specify fields to search on
 
     @action(detail=False, methods=['GET'])
     def all_capital_requests(self, request):
-        # Custom logic for GET method
-        # Example: Return a list of all Capital objects       
-      queryset = Capital.objects.order_by('-date')
-      page = self.paginate_queryset(queryset)
-      if page is not None:
+        # Custom logic for GET method with search and filtering
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        
+        if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-      serializer = self.get_serializer(queryset, many=True)
-      return Response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
 
     @action(detail=False, methods=['POST'])
     def custom_post(self, request):
@@ -91,23 +99,29 @@ class CapitalViewSet(viewsets.ModelViewSet):
 
 
 class OverheadViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = Overhead.objects.all()
-    serializer_class = OverheadSerializer
+    permission_classes = [IsAuthenticated]    
+    
     pagination_class = CustomPagination
+    queryset = Overhead.objects.order_by('-date')
+    serializer_class = OverheadSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['code', 'title', 'date']  # Specify fields to filter on
+    search_fields = ['title', 'amount', 'date', 'code']  # Specify fields to search on
 
     @action(detail=False, methods=['GET'])
-    def all_capital_requests(self, request):
-        # Custom logic for GET method
-        # Example: Return a list of all Capital objects       
-      queryset = Overhead.objects.order_by('-date')
-      page = self.paginate_queryset(queryset)
-      if page is not None:
+    def all_overhead_requests(self, request):
+        # Custom logic for GET method with search and filtering
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        
+        if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-      serializer = self.get_serializer(queryset, many=True)
-      return Response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+
 
     @action(detail=False, methods=['POST'])
     def custom_post(self, request):

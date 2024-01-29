@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('company_name', models.CharField(max_length=255)),
                 ('tin_number', models.CharField(max_length=20, unique=True)),
-                ('bank', models.CharField(max_length=255)),
+                ('bank', models.CharField(max_length=255)),                
                 ('sort_code', models.CharField(max_length=50)),
                 ('address', models.TextField()),
                 ('phone', models.CharField(max_length=15)),

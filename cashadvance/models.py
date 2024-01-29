@@ -8,10 +8,10 @@ from user.models import User
 # Create your models here.
 
 class Cheeck(models.TextChoices):
-        PROCESSING = 'processing', 'processing'
-        MANAGER = 'approved', 'Approved'        
-        ACCOUNT = 'reviewed', 'reviewed'
+        PROCESSING = 'processing', 'Processing'
+        MANAGER = 'approved', 'Approved'
         AUDIT = 'audited', 'Audited'
+        ACCOUNT = 'reviewed', 'Reviewed'
         PAID = 'paid', 'Paid'
 def validate_image_size(value):
     if value.size > 1024 * 1024:  # 1024KB in bytes
