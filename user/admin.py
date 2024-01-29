@@ -3,7 +3,7 @@ from .models import User, Profile
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['id','staff_number', 'first_name', 'last_name', 'role', 'email']
+    list_display = ['id', 'ipps_number', 'staff_number', 'first_name', 'last_name', 'role', 'email',]
 
 class ProfileAdmin(admin.ModelAdmin):
     list_editable = ['verified']

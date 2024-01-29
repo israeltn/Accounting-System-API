@@ -1,5 +1,6 @@
 from django.db import models
 from user.models import User
+from django.core.exceptions import ValidationError
 from contractors.models import Contractor
 from django.utils.timezone import now
 
@@ -7,7 +8,14 @@ from django.utils.timezone import now
 # Create your models here.
 
 
-
+class Cheeck(models.TextChoices):
+        PROCESSING = 'processing', 'processing'       
+        AUDIT = 'audited', 'Audited'
+        ACCOUNT = 'approved', 'Approved'
+        PAID = 'paid', 'Paid'
+def validate_image_size(value):
+    if value.size > 1024 * 1024:  # 1024KB in bytes
+        raise ValidationError("The maximum file size allowed is 1MB.") 
 class ContractPaymentVoucher(models.Model):
     payee = models.ForeignKey(Contractor, on_delete=models.CASCADE)
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
@@ -24,6 +32,8 @@ class ContractPaymentVoucher(models.Model):
     
     description = models.TextField()
     date = models.DateField()
+    supporting_documents= models.FileField(upload_to='contract_payment/', validators=[validate_image_size], null=True )
+    is_approved = models.CharField(max_length=20, choices=Cheeck.choices,  default=Cheeck.PROCESSING) 
     # Additional fields as needed
 
     def save(self, *args, **kwargs):

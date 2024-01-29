@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 
 
 class CapitalAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         capitals = Capital.objects.all()
@@ -36,4 +36,4 @@ class CapitalAPIView(APIView):
         
         combined_total = total_capital_amount + total_cashAdvance_amount
         
-        return Response({'total_capital_amount': total_capital_amount, 'combined_total': combined_total})
+        return Response({'total_capital_amount': total_capital_amount, 'total_cashadvance_amount': total_cashAdvance_amount, 'combined_total': combined_total})
