@@ -30,8 +30,8 @@ class ContractPaymentVoucher(models.Model):
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
     grand_total = models.DecimalField(max_digits=10, decimal_places=2)
     
-    description = models.TextField()
-    date = models.DateField()
+    description = models.TextField(max_length=200)
+    date = models.DateTimeField(default=now) 
     supporting_documents= models.FileField(upload_to='contract_payment/', validators=[validate_image_size], null=True )
     is_approved = models.CharField(max_length=20, choices=Cheeck.choices,  default=Cheeck.PROCESSING) 
     # Additional fields as needed

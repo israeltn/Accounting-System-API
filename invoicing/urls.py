@@ -2,12 +2,13 @@ from django.urls import path
 from .views import (    
     ContractPaymentVoucherListCreateView, ContractPaymentVoucherDetailView,
     PaymentVoucherListCreateView, PaymentVoucherDetailView,
-    StaffClaimListCreateView, StaffClaimDetailView,
+    StaffClaimListCreateView, StaffClaimDetailView, ApprovedContractPaymentListView
 )
 
 urlpatterns = [  
 
     path('contract-payment-vouchers/', ContractPaymentVoucherListCreateView.as_view(), name='contract-payment-voucher-list-create'),
+     path('approved-contract-payment/', ApprovedContractPaymentListView.as_view(), name='contract-payment-voucher-list-create'),
     path('contract-payment-vouchers/<int:pk>/', ContractPaymentVoucherDetailView.as_view(), name='contract-payment-voucher-detail'),
 
     path('payment-vouchers/', PaymentVoucherListCreateView.as_view(), name='payment-voucher-list-create'),

@@ -5,4 +5,4 @@ from .models import Payroll
 
 @admin.register(Payroll)
 class PayrollAdmin(admin.ModelAdmin):
-    list_display = ('user', 'conpss_salary', 'conpss_peculiar', 'shift_allowance', 'gross_total', 'total_deductions')
+    list_display = ('first_name', 'last_name','ipps_number','gl', 'step', 'station',  'conpss_salary', 'conpss_peculiar', 'shift_allowance', 'gross_total', 'total_deductions', 'total_salary')
