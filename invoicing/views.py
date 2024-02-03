@@ -46,6 +46,9 @@ class PaymentVoucherListCreateView(generics.ListCreateAPIView):
     queryset = PaymentVoucher.objects.all()
     serializer_class = PaymentVoucherSerializer
     pagination_class = CustomPageNumberPagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['payee', 'code']  # Use double underscores for nested fields
+    filterset_fields = ['payee', 'code']  # Add other fields as needed
 
 class PaymentVoucherDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = PaymentVoucher.objects.all()
@@ -55,6 +58,9 @@ class StaffClaimListCreateView(generics.ListCreateAPIView):
     queryset = StaffClaim.objects.all()
     serializer_class = StaffClaimSerializer
     pagination_class = CustomPageNumberPagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['payee', 'code']  # Use double underscores for nested fields
+    filterset_fields = ['payee', 'code']  # Add other fields as needed
 
 class StaffClaimDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = StaffClaim.objects.all()
