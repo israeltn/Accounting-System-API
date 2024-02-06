@@ -14,7 +14,7 @@ class CustomPageNumberPagination(PageNumberPagination):
     max_page_size = 100
 
 class ContractPaymentVoucherListCreateView(generics.ListCreateAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = ContractPaymentVoucher.objects.all().order_by('-date')
     
     pagination_class = CustomPageNumberPagination
@@ -28,7 +28,7 @@ class ContractPaymentVoucherListCreateView(generics.ListCreateAPIView):
         return ContractPaymentVoucherReadSerializer
 
 class ApprovedContractPaymentListView(generics.ListAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = ContractPaymentVoucher.objects.filter(is_approved='audited').order_by('-date')
     serializer_class = ContractPaymentVoucherReadSerializer
     pagination_class = CustomPageNumberPagination
@@ -42,7 +42,7 @@ class ContractPaymentVoucherDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ContractPaymentVoucherReadSerializer
 
 class PaymentVoucherListCreateView(generics.ListCreateAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = PaymentVoucher.objects.all()
     serializer_class = PaymentVoucherSerializer
     pagination_class = CustomPageNumberPagination
@@ -55,12 +55,13 @@ class PaymentVoucherDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PaymentVoucherSerializer
 
 class StaffClaimListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = StaffClaim.objects.all()
     serializer_class = StaffClaimSerializer
     pagination_class = CustomPageNumberPagination
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['payee', 'code']  # Use double underscores for nested fields
-    filterset_fields = ['payee', 'code']  # Add other fields as needed
+    search_fields = ['ipps_number', 'first_name', 'last_name']  # Use double underscores for nested fields
+    filterset_fields = ['ipps_number', 'first_name', 'last_name']  # Add other fields as needed
 
 class StaffClaimDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = StaffClaim.objects.all()

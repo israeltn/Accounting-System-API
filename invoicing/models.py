@@ -99,4 +99,4 @@ class StaffClaim(models.Model):
     sort_code=models.CharField(max_length=200)    
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
-    date = models.DateField()
+    date = models.DateTimeField(default=now) 

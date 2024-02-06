@@ -75,26 +75,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    # def update(self, instance, validated_data):
-    #     # Update regular fields
-    #     instance.user = validated_data.get('user', instance.user)            
-    #     instance.department = validated_data.get('department', instance.department)
-    #     instance.mobile = validated_data.get('mobile', instance.mobile)
-    #     instance.office = validated_data.get('office', instance.office)
-    #     instance.address = validated_data.get('address', instance.address)       
-    #     instance.degnisation = validated_data.get('degnisation', instance.degnisation)
-    #     instance.station = validated_data.get('station', instance.station)
-    #     instance.dob = validated_data.get('dob', instance.dob) 
-    #     instance.verified = validated_data.get('verified', instance.verified)            
-        
-
-    #     # Update profile picture if provided
-    #     profile = validated_data.get('profile')
-    #     if profile:
-    #         instance.profile_image = profile
-
-    #     instance.save()
-    #     return instance
+  
     
 
 class UpdateUserSerializer(serializers.ModelSerializer):
@@ -108,7 +89,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
         
-        fields=['email', 'username', 'first_name', 'last_name','staff_number', 'password', 'role']
+        fields=['email', 'username', 'first_name', 'last_name','staff_number','ipps_number', 'password', 'role']
         
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)

@@ -1,11 +1,12 @@
 # urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CapitalViewSet, OverheadViewSet, CommercialViewSet
+from .views import CapitalViewSet, OverheadViewSet,CommercialListCreateView, CommercialDetailView
 router = DefaultRouter()
 router.register(r'capital', CapitalViewSet, basename='capital')
 router.register(r'overhead', OverheadViewSet, basename='overhead')
-router.register(r'commercial', CommercialViewSet, basename='overhead')
+router.register(r'commercial', CommercialListCreateView, basename='commercial')
+
 
 urlpatterns = [
     path('capital/<int:pk>/history/', CapitalViewSet.as_view({'get': 'request_history'}), name='capital-history'),
@@ -21,11 +22,10 @@ urlpatterns = [
     path('overhead/all/', OverheadViewSet.as_view({'get': 'all_overhead_requests'}), name='all-overhead-requests'),
     path('overhead/', OverheadViewSet.as_view({'get': 'filter_overhead_requests'}), name='filter-overhead-requests'),
 
-    path('commercial/<int:pk>/history/', CommercialViewSet.as_view({'get': 'request_history'}), name='commercial-history'),
-    path('commercial/<int:pk>/', CommercialViewSet.as_view({'get': 'retrieve_commercial'}), name='commercial-detail'),
-    path('commercial/create/', CommercialViewSet.as_view({'post': 'create'}), name='create-commercial'),   
-    path('commercial/all/', CommercialViewSet.as_view({'get': 'all_commercial_requests'}), name='all-commercial-requests'),
-    path('commercial/', CommercialViewSet.as_view({'get': 'filter_commercial_requests'}), name='filter-commercial-requests'),
+
+
+    path('commercial/', CommercialListCreateView.as_view(), name='commercial-list-create'),
+    path('commercial/<int:pk>/', CommercialDetailView.as_view(), name='commercial-detail'),
 ]
 
 
