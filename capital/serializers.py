@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
-from .models import Capital
-from .models import Overhead
+from .models import Capital, Commercials,Overhead
+
 
 
 class CapitalSerializer(serializers.ModelSerializer):
@@ -14,4 +14,7 @@ class OverheadSerializer(serializers.ModelSerializer):
         model = Overhead
         fields = '__all__'       
 
-
+class CommercialsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Commercials
+        fields = '__all__'   

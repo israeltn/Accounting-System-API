@@ -18,6 +18,7 @@ def validate_image_size(value):
         raise ValidationError("The maximum file size allowed is 1MB.") 
 class ContractPaymentVoucher(models.Model):
     payee = models.ForeignKey(Contractor, on_delete=models.CASCADE)
+    code=models.CharField(max_length=10, null=True )  
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
     vat_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     withholding_tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
@@ -30,8 +31,8 @@ class ContractPaymentVoucher(models.Model):
     total_tax = models.DecimalField(max_digits=10, decimal_places=2)
     grand_total = models.DecimalField(max_digits=10, decimal_places=2)
     
-    description = models.TextField()
-    date = models.DateField()
+    description = models.TextField(max_length=200)
+    date = models.DateTimeField(default=now) 
     supporting_documents= models.FileField(upload_to='contract_payment/', validators=[validate_image_size], null=True )
     is_approved = models.CharField(max_length=20, choices=Cheeck.choices,  default=Cheeck.PROCESSING) 
     # Additional fields as needed
@@ -51,6 +52,7 @@ class ContractPaymentVoucher(models.Model):
 class PaymentVoucher(models.Model):
     payee = models.CharField(max_length=50)
     sub_total = models.DecimalField(max_digits=10, decimal_places=2)
+    code=models.CharField(max_length=10, null=True )  
     vat_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     withholding_tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     stamp_duty_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, null=True)
@@ -80,8 +82,21 @@ class PaymentVoucher(models.Model):
         super(PaymentVoucher, self).save(*args, **kwargs)
 
 class StaffClaim(models.Model):
-    payee = models.ForeignKey(User, on_delete=models.CASCADE)
-    code=models.CharField(max_length=10, null=True )   
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    staff_number = models.CharField(max_length=10)
+    ipps_number = models.CharField(max_length=10 )
+    code=models.CharField(max_length=10, null=True ) 
+    office=models.CharField(max_length=200)
+    gl=models.CharField(max_length=10)
+    step=models.CharField(max_length=10)
+    department=models.CharField(max_length=200)    
+    degnisation=models.CharField(max_length=200)
+    station=models.CharField(max_length=200)      
+    account_number=models.CharField(max_length=200, null=True)
+    bank=models.CharField(max_length=200)
+    branch=models.CharField(max_length=200)
+    sort_code=models.CharField(max_length=200)    
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
-    date = models.DateField()
+    date = models.DateTimeField(default=now) 

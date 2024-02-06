@@ -1,11 +1,13 @@
+from rest_framework import generics, filters
 from rest_framework import viewsets, serializers, pagination, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Capital, Overhead
+from .models import Capital, Overhead, Commercials
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+# from serializers  import CommercialsSerializer
 
 class CapitalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,6 +23,11 @@ class CustomPagination(PageNumberPagination):
 class OverheadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Overhead
+        fields = '__all__'
+
+class CommercialsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Commercials
         fields = '__all__'
 
 
@@ -175,69 +182,15 @@ class OverheadViewSet(viewsets.ModelViewSet):
 
 
 
-class CommercialViewSet(viewsets.ModelViewSet):
+class CommercialListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = Overhead.objects.all()
-    serializer_class = OverheadSerializer
+    queryset = Commercials.objects.all()
+    serializer_class = CommercialsSerializer
     pagination_class = CustomPagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['title', 'code']  # Use double underscores for nested fields
+    filterset_fields = ['title', 'code']  # Add other fields as needed
 
-    @action(detail=False, methods=['GET'])
-    def all_capital_requests(self, request):
-        # Custom logic for GET method
-        # Example: Return a list of all Capital objects       
-      queryset = Overhead.objects.order_by('-date')
-      page = self.paginate_queryset(queryset)
-      if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-      serializer = self.get_serializer(queryset, many=True)
-      return Response(serializer.data)
-
-    @action(detail=False, methods=['POST'])
-    def custom_post(self, request):
-        # Custom logic for POST method
-        # Example: Create a new Overhead object with supporting documents
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        # Handle supporting documents
-        Overhead_instance = serializer.instance
-        supporting_documents = request.FILES.getlist('supporting_documents')
-        for document in supporting_documents:
-            Overhead_instance.supporting_documents.create(file=document)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    @action(detail=True, methods=['PUT', 'PATCH'])
-    def custom_update(self, request, pk=None):
-        # Custom logic for PUT/PATCH method
-        # Example: Update a specific Overhead object
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        # Handle supporting documents
-        supporting_documents = request.FILES.getlist('supporting_documents')
-        if supporting_documents:
-            # Delete existing supporting documents
-            instance.supporting_documents.all().delete()
-
-            # Create new supporting documents
-            for document in supporting_documents:
-                instance.supporting_documents.create(file=document)
-        else:
-            # No supporting documents uploaded, delete existing ones
-            instance.supporting_documents.all().delete()
-
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['DELETE'])
-    def custom_delete(self, request, pk=None):
-        # Custom logic for DELETE method
-        # Example: Delete a specific Overhead object
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class CommercialDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Commercials.objects.all()
+    serializer_class = CommercialsSerializer

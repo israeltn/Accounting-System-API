@@ -115,7 +115,7 @@ class Commercials(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)  
     discription=models.TextField(max_length=200)
     code=models.CharField(max_length=200, null=True )   
-    supporting_documents= models.FileField(upload_to='overhead/', validators=[validate_image_size], null=True )
+    supporting_documents= models.FileField(upload_to='Commercials/', validators=[validate_image_size], null=True )
     date = models.DateTimeField(default=now) 
     remark=models.CharField(max_length=200, null=True) 
 

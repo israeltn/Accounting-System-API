@@ -5,6 +5,7 @@ from .models import Contractor
 from .serializers import ContractorSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import generics, filters
 
 
 class CustomPageNumberPagination(PageNumberPagination):
@@ -17,6 +18,8 @@ class ContractorListCreateView(generics.ListCreateAPIView):
     queryset = Contractor.objects.all()
     serializer_class = ContractorSerializer
     pagination_class=CustomPageNumberPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['tin_number', 'company_name', 'services_offered'] 
 
 class ContractorDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Contractor.objects.all()
