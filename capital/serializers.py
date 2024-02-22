@@ -17,4 +17,4 @@ class OverheadSerializer(serializers.ModelSerializer):
 class CommercialsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Commercials
-        fields = '__all__'   
+        fields = ('zonal_station','title', 'amount', 'discription', 'code',)
