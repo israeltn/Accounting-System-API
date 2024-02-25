@@ -17,8 +17,8 @@ class PayrollListCreateView(generics.ListCreateAPIView):
     serializer_class = PayrollSerializer
     pagination_class = CustomPageNumberPagination
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['ipps_number', 'payment_date']  # Use double underscores for nested fields
-    filterset_fields = ['ipps_number', 'payment_date']  # Add other fields as needed
+    search_fields = ['profile', 'payment_date']  # Use double underscores for nested fields
+    filterset_fields = ['profile', 'payment_date']  # Add other fields as needed
 
 class PayrollRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]

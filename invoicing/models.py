@@ -1,5 +1,5 @@
 from django.db import models
-from user.models import User
+from user.models import User, Profile
 from django.core.exceptions import ValidationError
 from contractors.models import Contractor
 from django.utils.timezone import now
@@ -82,21 +82,8 @@ class PaymentVoucher(models.Model):
         super(PaymentVoucher, self).save(*args, **kwargs)
 
 class StaffClaim(models.Model):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    staff_number = models.CharField(max_length=10)
-    ipps_number = models.CharField(max_length=10 )
-    code=models.CharField(max_length=10, null=True ) 
-    office=models.CharField(max_length=200)
-    gl=models.CharField(max_length=10)
-    step=models.CharField(max_length=10)
-    department=models.CharField(max_length=200)    
-    degnisation=models.CharField(max_length=200)
-    station=models.CharField(max_length=200)      
-    account_number=models.CharField(max_length=200, null=True)
-    bank=models.CharField(max_length=200)
-    branch=models.CharField(max_length=200)
-    sort_code=models.CharField(max_length=200)    
+    payee = models.ForeignKey(Profile, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    code=models.CharField(max_length=10, null=True )  
     description = models.TextField()
     date = models.DateTimeField(default=now) 

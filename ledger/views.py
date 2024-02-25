@@ -16,15 +16,21 @@ from rest_framework.views import APIView
 
 
 class CapitalAPIView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         capitals = Capital.objects.all()
         cashadvance=CashAdvance.objects.all()
-        
+        contractpayment=ContractPaymentVoucher.objects.all()
+        payment=PaymentVoucher.objects.all()
+        staffclaim=StaffClaim.objects.all()
+
         # Calculate total_amount
         total_capital_amount = sum(capital.amount for capital in capitals)
         total_cashAdvance_amount = sum(cashadvance.amount for cashadvance in  cashadvance)
+        total_ContractPaymentVoucher = sum(contractpayment.grand_total for contractpayment in  contractpayment)
+        total_payment = sum(payment.amount for payment in  payment)
+        total_staffclaim= sum(staffclaim.amount for staffclaim in  staffclaim)
 
         # Calculate total income and expenses
         # total_income = cash_advance_collections_total + commercial_igr_total
@@ -36,4 +42,6 @@ class CapitalAPIView(APIView):
         
         combined_total = total_capital_amount + total_cashAdvance_amount
         
-        return Response({'total_capital_amount': total_capital_amount, 'total_cashadvance_amount': total_cashAdvance_amount, 'combined_total': combined_total})
+        return Response({'total_capital_amount': total_capital_amount, 'total_cashadvance_amount': total_cashAdvance_amount, 
+                         'total_payment': total_payment, 'total_staffclaim': total_staffclaim,
+                         'combined_total': combined_total, 'total_ontract_payment':total_ContractPaymentVoucher})
