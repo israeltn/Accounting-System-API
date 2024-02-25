@@ -62,8 +62,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)    
     mobile=models.CharField(max_length=20)
+    gender=models.CharField(max_length=200)
     address=models.CharField(max_length=200)
-    office=models.CharField(max_length=200)
+    tax_state=models.CharField(max_length=200)
+    division=models.CharField(max_length=200)
     gl=models.CharField(max_length=10)
     step=models.CharField(max_length=10)
     department=models.CharField(max_length=200)    
@@ -76,6 +78,8 @@ class Profile(models.Model):
     bank=models.CharField(max_length=200)
     branch=models.CharField(max_length=200)
     sort_code=models.CharField(max_length=200)     
+    pfa_name=models.CharField(max_length=200) 
+    pension_pin=models.CharField(max_length=200) 
     profile= models.ImageField(upload_to='profile_images/', default="default.jpg")   
     verified=models.BooleanField(default=False)
     def __str__(self):

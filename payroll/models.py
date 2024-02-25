@@ -1,28 +1,15 @@
 from django.db import models
 from django.utils.timezone import now
+from user.models import Profile
 
 
 # Create your models here.
 
 class Payroll(models.Model):    
     
-    first_name = models.CharField(max_length=30)
-    email = models.EmailField(max_length=30, unique=True, null=True)
-    last_name = models.CharField(max_length=30)
-    staff_number = models.CharField(max_length=10, unique=True)
-    ipps_number = models.CharField(max_length=10, unique=True) 
-    office=models.CharField(max_length=200)
-    gl=models.CharField(max_length=20)
-    step=models.CharField(max_length=20)
-    department=models.CharField(max_length=200)    
-    degnisation=models.CharField(max_length=200)
-    station=models.CharField(max_length=200)
-    
-    union=models.CharField(max_length=200, null=True) 
-    account_number=models.CharField(max_length=200)
-    bank=models.CharField(max_length=200)
-    branch=models.CharField(max_length=200)
-    sort_code=models.CharField(max_length=200)  
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE)   
+      
+ 
         #Gross Earnings Information
     conpss_salary=models.DecimalField(max_digits=10, decimal_places=2)
     conpss_peculiar=models.DecimalField(max_digits=10, decimal_places=2)
@@ -50,8 +37,10 @@ class Payroll(models.Model):
         self.total_salary = self.gross_total - self.total_deductions
         
         super(Payroll, self).save(*args, **kwargs)
-
     def __str__(self):
-        return self.ipps_number
+        return self.profile.user.ipps_number
+
+    # def __str__(self):
+    #     return self.ipps_number
 
     

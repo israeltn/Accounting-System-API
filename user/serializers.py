@@ -60,7 +60,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Profile         
-        fields = ['user', 'department', 'mobile', 'office', 'gl', 'step', 'address', 
+        fields = ['user', 'department', 'mobile', 'office','gender', 'tax_state', 'gl', 'step', 'address', 
                   'degnisation', 'station', 'dob','doa', 'union', 'account_number', 'bank', 'branch', 'sort_code' 'profile', 'verified',
                    
                     ]  # Add other fields as needed
