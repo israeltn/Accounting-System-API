@@ -7,10 +7,23 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
     
 
-class UserProfileSerializer(serializers.ModelSerializer):  
+# Get Cash Advance list with user 
+class UsersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
-        fields = '__all__'
+        model = User
+        fields = ['id', 'first_name',  'last_name', 'email', 'role','staff_number', 'ipps_number' ]
+
+class UserProfileSerializer(serializers.ModelSerializer):  
+    user = UsersSerializer()
+    class Meta:
+     
+        model = Profile         
+        fields = ['id', 'user', 'department', 'mobile', 'gender', 'tax_state','division', 'gl', 'step', 'address', 
+                  'degnisation', 'station', 'dob','doa', 'union', 'account_number', 'bank', 'branch', 'sort_code', 'profile', 'verified',
+                  'pfa_name', 'pension_pin'
+                   
+                    ]  # Add other fields as needed
+        read_only_fields = ['user']
 
 class UserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer()
@@ -104,11 +117,6 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         return instance
 
 
-# Get Cash Advance list with user 
-class UsersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name',  'last_name', 'email', 'role','staff_number', 'ipps_number' ]
 
 
 

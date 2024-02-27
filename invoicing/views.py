@@ -1,7 +1,7 @@
 # In your app's views.py file (e.g., yourapp/views.py)
 from rest_framework import generics
 from .models import  ContractPaymentVoucher, PaymentVoucher, StaffClaim
-from .serializers import ContractPaymentVoucherWriteSerializer,ContractPaymentVoucherReadSerializer, PaymentVoucherSerializer, StaffClaimSerializer
+from .serializers import ContractPaymentVoucherWriteSerializer, ContractPaymentVoucherReadSerializer, PaymentVoucherSerializer, StaffClaimReadSerializer, StaffClaimWriteSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics, filters
@@ -57,12 +57,17 @@ class PaymentVoucherDetailView(generics.RetrieveUpdateDestroyAPIView):
 class StaffClaimListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = StaffClaim.objects.all()
-    serializer_class = StaffClaimSerializer
+    serializer_class = StaffClaimWriteSerializer
     pagination_class = CustomPageNumberPagination
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['ipps_number', 'first_name', 'last_name']  # Use double underscores for nested fields
-    filterset_fields = ['ipps_number', 'first_name', 'last_name']  # Add other fields as needed
+    search_fields = ['profile__user__first_name' ]  # Use double underscores for nested fields
+    filterset_fields = ['profile__user__first_name' ]  # Add other fields as needed
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return StaffClaimWriteSerializer
+        return StaffClaimReadSerializer
 
 class StaffClaimDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = StaffClaim.objects.all()
-    serializer_class = StaffClaimSerializer
+    serializer_class = StaffClaimWriteSerializer

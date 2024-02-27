@@ -13,7 +13,8 @@ class PaymentVoucherAdmin(admin.ModelAdmin):
 
 @admin.register(StaffClaim)
 class StaffClaimAdmin(admin.ModelAdmin):
-    list_display = ('get_first_name','get_last_name', 'get_ipps_number','get_gl','get_step','get_department', 'get_degnisation','get_station',  'amount', 'code', 'description', 'date')
+    list_display = ('get_first_name','get_last_name', 'get_mobile', 'get_ipps_number','get_gl','get_step','get_department', 'get_degnisation','get_station',  'amount', 'code', 'description', 'date')
+   
     def get_first_name(self, obj):
         return obj.profile.user.first_name if obj.profile.user else None
     get_first_name.short_description = 'First Name'
@@ -33,12 +34,20 @@ class StaffClaimAdmin(admin.ModelAdmin):
     def get_step(self, obj):
         return obj.profile.step if obj.profile else None
     get_step.short_description = 'Step'
+
+    def get_station(self, obj):
+        return obj.profile.station if obj.profile else None
+    get_station.short_description = 'Station'     
+   
     def get_department(self, obj):
         return obj.profile.station if obj.profile else None
     get_department.short_description = 'Department'
+
     def get_degnisation(self, obj):
-        return obj.profile.station if obj.profile else None
-    get_degnisation.short_description = 'Degnisation'
-    def get_station(self, obj):
-        return obj.profile.station if obj.profile else None
-    get_station.short_description = 'Station'
+        return obj.profile.station if obj.profile else None    
+    get_degnisation.short_description = 'Description'
+
+    def get_mobile(self, obj):
+        return obj.profile.mobile if obj.profile else None
+    get_mobile.short_description = 'Mobile'
+   

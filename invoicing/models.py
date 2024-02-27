@@ -82,7 +82,7 @@ class PaymentVoucher(models.Model):
         super(PaymentVoucher, self).save(*args, **kwargs)
 
 class StaffClaim(models.Model):
-    payee = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE)   
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     code=models.CharField(max_length=10, null=True )  
     description = models.TextField()
