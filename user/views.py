@@ -101,6 +101,13 @@ class UserListAPIView(generics.ListAPIView):
 
 
 # Profile Update
+    
+class ProfileListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Profile.objects.all()
+    serializer_class = UserProfileSerializer
+    pagination_class =StandardResultsSetPagination
+
 class ProfileUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UpdateProfileSerializer

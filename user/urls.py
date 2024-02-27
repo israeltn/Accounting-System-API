@@ -1,7 +1,7 @@
 
 from . import views
 from django.urls import path
-from .views import UserUpdateAPIView, UserListAPIView, ProfileUpdateView, UserProfileView
+from .views import UserUpdateAPIView, UserListAPIView, ProfileListAPIView, ProfileUpdateView, UserProfileView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView, TokenVerifyView
 )
@@ -24,6 +24,7 @@ urlpatterns = [
     path('profile/update/', ProfileUpdateView.as_view(), name='profile-update'),
     path('profile/view/', UserProfileView.as_view(), name='profile-view'),
     
+    path('profiles/', ProfileListAPIView.as_view(), name='user-list'),
    
    
   
