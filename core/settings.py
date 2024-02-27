@@ -127,9 +127,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'accounting',
-        'USER': 'root',
-        'PASSWORD': '',
+        'NAME': 'icreatagency_account_db',
+        'USER': 'icreatagency_brave',
+        'PASSWORD': 'BraveCup#1960',
+        'HOST': 'localhost',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
